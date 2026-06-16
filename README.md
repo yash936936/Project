@@ -8,22 +8,29 @@ This folder contains all planning and design documentation for the AI System Des
 
 ```
 docs/
-├── README.md                          ← You are here (index + guide)
+├── README.md                              ← You are here (index + guide)
 │
 ├── design/
-│   └── sysdesign_ai_blueprint.html    ← Master visual blueprint (source of truth)
+│   └── sysdesign_ai_blueprint.html        ← Master visual blueprint (source of truth)
 │
 ├── product/
-│   ├── prd.md                         ← Product Requirements Document
-│   └── appflow.md                     ← Screen-by-screen app flow (8 screens)
+│   ├── prd.md                             ← Product Requirements Document
+│   ├── appflow.md                         ← Screen-by-screen app flow (8 screens)
+│   └── user-stories.md                    ← Full user story backlog (16 stories, 6 epics)
 │
 ├── engineering/
-│   ├── trd.md                         ← Technical Requirements Document
-│   └── workflow.md                    ← 7-stage AI pipeline workflow
+│   ├── trd.md                             ← Technical Requirements Document
+│   ├── workflow.md                        ← 7-stage AI pipeline workflow
+│   ├── api-spec.md                        ← Full API specification (6 endpoints)
+│   ├── db-schema.md                       ← Full DB schema (5 tables, indexes, migrations)
+│   ├── env-vars.md                        ← All environment variables across all services
+│   └── prompt-library.md                  ← Versioned LLM prompts for all 7 pipeline stages
 │
 └── decisions/
-    └── adr/                           ← Architecture Decision Records (add as needed)
-        └── .gitkeep
+    └── adr/
+        ├── 001-llm-provider.md            ← Claude Sonnet (primary) + GPT-4o (fallback)
+        ├── 002-streaming-sse.md           ← SSE over WebSockets for stage streaming
+        └── 003-storage-r2.md             ← Cloudflare R2 over AWS S3
 ```
 
 ---
@@ -35,29 +42,16 @@ docs/
 | `sysdesign_ai_blueprint.html` | Visual master blueprint — single source of truth | All |
 | `prd.md` | Problem, personas, features (MoSCoW), metrics, roadmap | PM, Stakeholders |
 | `appflow.md` | 8-screen UX flow with component detail per screen | Designer, Frontend Dev |
+| `user-stories.md` | 16 ticket-ready stories across 6 epics with acceptance criteria | PM, Dev Team |
 | `trd.md` | Architecture layers, API contracts, DB schema, security, SLOs | Backend Dev, DevOps |
 | `workflow.md` | 7-stage AI pipeline — how prompt becomes output | AI Engineer, Full Stack |
-
----
-
-## Suggested Files to Add
-
-The following are **not yet created** but are strongly recommended before development starts:
-
-### `product/`
-- **`roadmap.md`** — Expand the Phase 1–4 plan from the PRD into a proper sprint-level breakdown with owners and dates.
-- **`user-stories.md`** — Extract the full user story backlog (from PRD personas) into individual ticket-ready stories with acceptance criteria.
-
-### `engineering/`
-- **`api-spec.md`** — Full OpenAPI-style documentation for each of the 6 API endpoints defined in the TRD (request bodies, response schemas, error codes).
-- **`db-schema.md`** — Expanded schema file with column types, indexes, constraints, and migration notes for all 5 tables.
-- **`env-vars.md`** — Catalogue every environment variable the system needs (API keys, DB URLs, Redis URL, feature flags) with description and which service owns it.
-- **`prompt-library.md`** — Version-controlled prompts for all 7 pipeline stages. Essential for the LLM layer since prompts are the core logic.
-
-### `decisions/adr/`
-- **`001-llm-provider.md`** — Why Claude Sonnet as primary + GPT-4o fallback.
-- **`002-streaming-sse.md`** — Why SSE over WebSockets for stage streaming.
-- **`003-storage-r2.md`** — Why Cloudflare R2 over S3 for diagram/doc payloads.
+| `api-spec.md` | Request/response schemas, error codes for all 6 endpoints | Frontend Dev, Backend Dev |
+| `db-schema.md` | Full SQL schema, column types, indexes, FK relationships, migrations | Backend Dev, DevOps |
+| `env-vars.md` | All env vars per service with rotation policy and `.env.example` | DevOps, All Devs |
+| `prompt-library.md` | Versioned prompts for all 7 stages with eval criteria | AI Engineer |
+| `001-llm-provider.md` | ADR: why Claude Sonnet + GPT-4o fallback | Engineering Lead |
+| `002-streaming-sse.md` | ADR: why SSE over WebSockets | Engineering Lead |
+| `003-storage-r2.md` | ADR: why Cloudflare R2 over S3 | Engineering Lead, DevOps |
 
 ---
 
@@ -67,4 +61,8 @@ The following are **not yet created** but are strongly recommended before develo
 2. **Read `appflow.md`** to understand the user journey before touching any UI code.
 3. **Read `workflow.md`** to understand the AI pipeline before writing any backend logic.
 4. **Use `trd.md`** as the reference for every implementation decision — API design, DB schema, security, and infra.
-5. **Keep `sysdesign_ai_blueprint.html` as the visual anchor** — open it in a browser when onboarding new team members.
+5. **Use `api-spec.md`** when building any frontend↔backend integration — it has the full request/response contracts.
+6. **Use `db-schema.md`** before writing any migration — it has column types, indexes, and FK relationships.
+7. **Copy `.env.example` from `env-vars.md`** as your starting point for local dev setup.
+8. **Read ADRs before changing a major architectural choice** — they explain why decisions were made and what the review triggers are.
+9. **Keep `sysdesign_ai_blueprint.html` as the visual anchor** — open it in a browser when onboarding new team members.
