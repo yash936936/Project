@@ -1,0 +1,641 @@
+
+<h2 class="sr-only">AI System Design Assistant — Full Product Blueprint covering Workflow, App Flow, PRD, and TRD</h2>
+
+<style>
+  :root { --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-600:#534AB7;--purple-800:#3C3489;--purple-900:#26215C; --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-600:#0F6E56;--teal-800:#085041; --coral-50:#FAECE7;--coral-100:#F5C4B3;--coral-600:#993C1D;--coral-800:#712B13; --amber-50:#FAEEDA;--amber-100:#FAC775;--amber-600:#854F0B;--amber-800:#633806; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .wrap { font-family: var(--font-sans); max-width: 680px; }
+
+  .hero { padding: 1.5rem 0 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 1rem; }
+  .hero-badge { display:inline-flex;align-items:center;gap:6px;background:var(--purple-50);color:var(--purple-800);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;border:0.5px solid var(--purple-100);margin-bottom:10px; }
+  .hero h1 { font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1.3;margin-bottom:6px; }
+  .hero p { font-size:14px;color:var(--color-text-secondary);line-height:1.6;max-width:540px; }
+
+  .tabs { display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0; }
+  .tab { padding:8px 14px;font-size:13px;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px;font-family:var(--font-sans);transition:color .15s; }
+  .tab:hover { color:var(--color-text-primary); }
+  .tab.active { color:var(--purple-800);border-bottom-color:var(--purple-600);font-weight:500; }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  .section-label { font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px; }
+  .section-title { font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px; }
+  .section-desc { font-size:14px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:1.5rem; }
+
+  .step-card { display:flex;gap:14px;padding:14px 16px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;background:var(--color-background-primary); }
+  .step-num { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0; }
+  .step-body h3 { font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px; }
+  .step-body p { font-size:13px;color:var(--color-text-secondary);line-height:1.55; }
+  .step-tags { display:flex;flex-wrap:wrap;gap:5px;margin-top:7px; }
+  .tag { font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500; }
+  .tag-purple { background:var(--purple-50);color:var(--purple-800); }
+  .tag-teal { background:var(--teal-50);color:var(--teal-800); }
+  .tag-coral { background:var(--coral-50);color:var(--coral-800); }
+  .tag-amber { background:var(--amber-50);color:var(--amber-800); }
+
+  .connector { display:flex;align-items:center;margin:0 0 0 28px;height:16px; }
+  .connector-line { width:1px;height:100%;background:var(--color-border-secondary);margin-left:13px; }
+
+  .flow-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem; }
+  .flow-card { border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;background:var(--color-background-primary); }
+  .flow-card .fc-icon { width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:16px; }
+  .flow-card h4 { font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px; }
+  .flow-card p { font-size:12px;color:var(--color-text-secondary);line-height:1.5; }
+
+  .screen-flow { margin-bottom:1.5rem; }
+  .screen { border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:8px;overflow:hidden; }
+  .screen-header { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer; }
+  .screen-header h4 { font-size:13px;font-weight:500;color:var(--color-text-primary); }
+  .screen-header .sh-meta { font-size:12px;color:var(--color-text-tertiary); }
+  .screen-body { padding:12px 14px;display:none; }
+  .screen-body.open { display:block; }
+  .screen-body ul { padding-left:16px; }
+  .screen-body li { font-size:13px;color:var(--color-text-secondary);line-height:1.7; }
+
+  .prd-section { margin-bottom:1.75rem; }
+  .prd-section h3 { font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary); }
+
+  .req-table { width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1rem; }
+  .req-table th { text-align:left;padding:7px 10px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.06em;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary); }
+  .req-table td { padding:8px 10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.5;vertical-align:top; }
+  .req-table tr:last-child td { border-bottom:none; }
+  .priority { display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500; }
+  .p-must { background:#FAECE7;color:#712B13; }
+  .p-should { background:#FAEEDA;color:#633806; }
+  .p-could { background:#E1F5EE;color:#085041; }
+  .p-wont { background:#F1EFE8;color:#5F5E5A; }
+
+  .persona-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem; }
+  .persona-card { border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px; }
+  .persona-avatar { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;margin-bottom:8px; }
+  .persona-card h4 { font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px; }
+  .persona-card .persona-role { font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px; }
+  .persona-card p { font-size:12px;color:var(--color-text-secondary);line-height:1.5; }
+
+  .metric-row { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem; }
+  .metric-card { background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px; }
+  .metric-card .mv { font-size:20px;font-weight:500;color:var(--color-text-primary); }
+  .metric-card .ml { font-size:11px;color:var(--color-text-tertiary);margin-top:2px; }
+
+  .arch-box { border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden; }
+  .arch-header { padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px; }
+  .arch-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+  .arch-header h4 { font-size:13px;font-weight:500;color:var(--color-text-primary); }
+  .arch-body { padding:12px 14px; }
+  .tech-chips { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+  .chip { font-size:12px;padding:3px 10px;border-radius:6px;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary); }
+  .chip strong { font-weight:500;color:var(--color-text-primary); }
+
+  .api-row { padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;gap:10px; }
+  .api-row:last-child { border-bottom:none; }
+  .method { font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500;font-family:var(--font-mono);flex-shrink:0; }
+  .m-post { background:#EEEDFE;color:#3C3489; }
+  .m-get { background:#E1F5EE;color:#085041; }
+  .m-put { background:#FAEEDA;color:#633806; }
+  .api-path { font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);font-weight:500; }
+  .api-desc { font-size:12px;color:var(--color-text-secondary); }
+
+  .tl-row { display:flex;gap:12px;margin-bottom:10px;align-items:flex-start; }
+  .tl-phase { min-width:80px;font-size:11px;font-weight:500;color:var(--color-text-tertiary);padding-top:2px; }
+  .tl-content { flex:1;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 12px; }
+  .tl-content h4 { font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px; }
+  .tl-content p { font-size:12px;color:var(--color-text-secondary);line-height:1.5; }
+
+  .callout { border-left:3px solid var(--purple-600);background:var(--purple-50);padding:10px 14px;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-bottom:1rem; }
+  .callout p { font-size:13px;color:var(--purple-900);line-height:1.55; }
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-badge"><i class="ti ti-cpu" aria-hidden="true" style="font-size:12px"></i> Product Blueprint</div>
+    <h1>AI System Design Assistant</h1>
+    <p>A complete product blueprint — workflow, app flow, PRD, and TRD — for an AI agent that transforms a plain-language prompt into architecture diagrams, flow visuals, tech stack recommendations, and structured docs.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('workflow',this)"><i class="ti ti-git-branch" aria-hidden="true"></i> Workflow</button>
+    <button class="tab" onclick="switchTab('appflow',this)"><i class="ti ti-layout" aria-hidden="true"></i> App Flow</button>
+    <button class="tab" onclick="switchTab('prd',this)"><i class="ti ti-file-text" aria-hidden="true"></i> PRD</button>
+    <button class="tab" onclick="switchTab('trd',this)"><i class="ti ti-terminal" aria-hidden="true"></i> TRD</button>
+  </div>
+
+  <!-- WORKFLOW TAB -->
+  <div id="panel-workflow" class="panel active">
+    <p class="section-label">End-to-end pipeline</p>
+    <p class="section-title">How the agent works</p>
+    <p class="section-desc">Seven distinct stages take a single user prompt all the way to a fully exportable system design package. Each stage feeds structured output into the next.</p>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--purple-50);color:var(--purple-800);">1</div>
+      <div class="step-body">
+        <h3>Prompt ingestion</h3>
+        <p>User describes their website or product in natural language — as simple as "build me an e-commerce site" or as detailed as a feature list. The agent accepts unstructured input and asks clarifying questions if scope is ambiguous.</p>
+        <div class="step-tags">
+          <span class="tag tag-purple">Natural language</span>
+          <span class="tag tag-purple">Intent extraction</span>
+          <span class="tag tag-purple">Domain classification</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--teal-50);color:var(--teal-800);">2</div>
+      <div class="step-body">
+        <h3>System classification & scoping</h3>
+        <p>The LLM classifies the product type (SaaS, marketplace, CMS, fintech, social, etc.), infers expected scale (startup / growth / enterprise), identifies primary user personas, and determines key system constraints like real-time, file handling, or payment flows.</p>
+        <div class="step-tags">
+          <span class="tag tag-teal">Product type tagging</span>
+          <span class="tag tag-teal">Scale inference</span>
+          <span class="tag tag-teal">Constraint detection</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--teal-50);color:var(--teal-800);">3</div>
+      <div class="step-body">
+        <h3>Architecture generation</h3>
+        <p>A structured JSON representation of the system is produced — services, databases, queues, CDNs, third-party integrations. This JSON is then rendered into an interactive architecture diagram using a diagramming engine (Mermaid or D3-based).</p>
+        <div class="step-tags">
+          <span class="tag tag-teal">JSON schema</span>
+          <span class="tag tag-teal">Component graph</span>
+          <span class="tag tag-teal">Interactive diagram</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--teal-50);color:var(--teal-800);">4</div>
+      <div class="step-body">
+        <h3>Flow diagram generation</h3>
+        <p>Three types of flows are generated in parallel: user journey flows (screens and decisions), data flow diagrams (how data moves between components), and API sequence diagrams (request/response lifecycles for key operations like auth, checkout, search).</p>
+        <div class="step-tags">
+          <span class="tag tag-teal">User journey</span>
+          <span class="tag tag-teal">Data flow</span>
+          <span class="tag tag-teal">API sequences</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--amber-50);color:var(--amber-800);">5</div>
+      <div class="step-body">
+        <h3>Tech stack recommendation</h3>
+        <p>Based on the classified product type and constraints, the agent recommends a layered tech stack — frontend, backend, database, infra, DevOps, and third-party services. Each recommendation includes a rationale and trade-off comparison against alternatives.</p>
+        <div class="step-tags">
+          <span class="tag tag-amber">Layer-by-layer stack</span>
+          <span class="tag tag-amber">Rationale</span>
+          <span class="tag tag-amber">Alternatives</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--coral-50);color:var(--coral-800);">6</div>
+      <div class="step-body">
+        <h3>PRD generation</h3>
+        <p>A full Product Requirements Document is synthesised — problem statement, user personas, prioritised feature list (MoSCoW), user stories with acceptance criteria, success metrics, and a phased delivery roadmap.</p>
+        <div class="step-tags">
+          <span class="tag tag-coral">Problem statement</span>
+          <span class="tag tag-coral">User stories</span>
+          <span class="tag tag-coral">MoSCoW prioritisation</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"><div class="connector-line"></div></div>
+
+    <div class="step-card">
+      <div class="step-num" style="background:var(--coral-50);color:var(--coral-800);">7</div>
+      <div class="step-body">
+        <h3>TRD generation & export</h3>
+        <p>A Technical Requirements Document covers API contracts, database schema, security model, scalability strategy, and deployment topology. All outputs — diagrams + PRD + TRD — are bundled for export as PDF, Markdown, or pushed to Notion/Confluence.</p>
+        <div class="step-tags">
+          <span class="tag tag-coral">API contracts</span>
+          <span class="tag tag-coral">DB schema</span>
+          <span class="tag tag-coral">Export (PDF / MD)</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem">
+      <p class="section-label">Key design decisions</p>
+      <div class="flow-grid">
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--purple-50)"><i class="ti ti-bolt" aria-hidden="true" style="color:var(--purple-600)"></i></div>
+          <h4>Streaming output</h4>
+          <p>Each stage streams results progressively so users see value within seconds, not after a 30s wait.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--teal-50)"><i class="ti ti-refresh" aria-hidden="true" style="color:var(--teal-600)"></i></div>
+          <h4>Iterative refinement</h4>
+          <p>Users can edit the prompt or click any component in the diagram to regenerate just that section.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--amber-50)"><i class="ti ti-layers-linked" aria-hidden="true" style="color:var(--amber-600)"></i></div>
+          <h4>Context chaining</h4>
+          <p>All 7 stages share a single context object, so PRD and TRD stay consistent with the architecture.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--coral-50)"><i class="ti ti-package" aria-hidden="true" style="color:var(--coral-600)"></i></div>
+          <h4>Bundled export</h4>
+          <p>One-click export packs diagrams, PRD, TRD, and stack doc into a shareable ZIP or Notion page.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP FLOW TAB -->
+  <div id="panel-appflow" class="panel">
+    <p class="section-label">Screen-by-screen journey</p>
+    <p class="section-title">User experience flow</p>
+    <p class="section-desc">Eight screens form the end-to-end experience. Click each screen to see its components and UX details.</p>
+
+    <div class="screen-flow">
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--purple-50);color:var(--purple-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">1</span><h4>Landing page</h4></div>
+          <span class="sh-meta">Hero + prompt examples</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Headline + sub-headline positioning the product as "describe it, design it"</li>
+            <li>Large prompt input field as the primary CTA (no sign-up wall for first generation)</li>
+            <li>3–4 example prompt chips: "SaaS analytics dashboard", "Food delivery marketplace", "Fintech wallet app"</li>
+            <li>Social proof row (logos of generated diagrams, not testimonials)</li>
+            <li>Sign-in option to save history — deferred, not blocking</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--purple-50);color:var(--purple-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">2</span><h4>Prompt input & configuration</h4></div>
+          <span class="sh-meta">Input + optional config</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Expandable textarea for detailed prompt entry with character guidance</li>
+            <li>Optional toggles: "Include mobile app", "Enterprise scale", "Add real-time features"</li>
+            <li>Optional depth selectors: Startup MVP / Growth stage / Enterprise — changes diagram complexity</li>
+            <li>Output preferences: which sections to generate (all or selective)</li>
+            <li>"Generate" CTA — triggers the 7-stage pipeline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--teal-50);color:var(--teal-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">3</span><h4>Generation progress screen</h4></div>
+          <span class="sh-meta">Animated step tracker</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>7-step progress bar, each step showing status (pending / in-progress / done)</li>
+            <li>Streaming preview: architecture JSON appears live in a side panel as it's generated</li>
+            <li>Estimated time remaining per step (typically 3–8 sec each)</li>
+            <li>Cancel option — stops generation and discards partial output</li>
+            <li>Background continues even if user navigates away; notification on completion</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--teal-50);color:var(--teal-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">4</span><h4>Architecture diagram canvas</h4></div>
+          <span class="sh-meta">Primary output screen</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Full-canvas interactive architecture diagram — pan, zoom, click nodes</li>
+            <li>Clicking a node (e.g. "Auth Service") shows a detail drawer: responsibilities, API contracts, scaling notes</li>
+            <li>Zoom levels: overview / service-level / component-level</li>
+            <li>Toggle layers: show/hide databases, queues, CDN, monitoring, third-party services</li>
+            <li>Inline edit: right-click any node to rename, remove, or ask AI to add a new service</li>
+            <li>Minimap navigator in bottom-right corner</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--teal-50);color:var(--teal-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">5</span><h4>Flow diagrams panel</h4></div>
+          <span class="sh-meta">3 flow types as subtabs</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Sub-tabs: User Journey / Data Flow / API Sequence</li>
+            <li>User Journey: screen-by-screen flowchart with decision diamonds</li>
+            <li>Data Flow: shows how data enters, transforms, and persists across components</li>
+            <li>API Sequence: UML-style sequence diagrams for key API calls (auth, create order, etc.)</li>
+            <li>All flows linked to the main architecture — clicking a service highlights it on the canvas</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--amber-50);color:var(--amber-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">6</span><h4>Tech stack recommendation</h4></div>
+          <span class="sh-meta">Layered stack card view</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Layer cards: Frontend / Backend / Database / Infra / Auth / Monitoring / DevOps</li>
+            <li>Each card shows primary recommendation + 1–2 alternatives with a "why" rationale</li>
+            <li>Trade-off matrix: cost, complexity, scalability, team familiarity sliders</li>
+            <li>AI chat inline: "Why not use GraphQL here?" → agent responds in context</li>
+            <li>One-click swap: change a tech choice and watch how it affects other layers</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--coral-50);color:var(--coral-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">7</span><h4>PRD & TRD document view</h4></div>
+          <span class="sh-meta">Structured document reader</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Sidebar TOC for navigation within the doc</li>
+            <li>Inline editing — click any section to edit or ask AI to rewrite</li>
+            <li>PRD sections: Overview, Personas, Features, User Stories, Metrics, Roadmap</li>
+            <li>TRD sections: Architecture Decisions, API Contracts, DB Schema, Security, SLAs</li>
+            <li>Comment mode: leave inline notes to share with team</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="screen-header" onclick="toggleScreen(this)">
+          <div style="display:flex;align-items:center;gap:8px"><span class="step-num" style="background:var(--coral-50);color:var(--coral-800);width:22px;height:22px;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center">8</span><h4>Export & share</h4></div>
+          <span class="sh-meta">Multi-format output</span>
+        </div>
+        <div class="screen-body">
+          <ul>
+            <li>Export individual sections or full bundle</li>
+            <li>Formats: PDF (styled), Markdown, JSON (diagram schema), PNG/SVG (diagrams)</li>
+            <li>Integrations: push to Notion page, Confluence, GitHub repo, Linear project</li>
+            <li>Shareable read-only link with optional password protection</li>
+            <li>Version history: each regeneration creates a snapshot the user can diff</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRD TAB -->
+  <div id="panel-prd" class="panel">
+    <p class="section-label">Product requirements document</p>
+
+    <div class="prd-section">
+      <h3>Problem statement</h3>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.65">Developers, product managers, and startup founders spend days or weeks translating an idea into a coherent system design, PRD, and tech plan. This process requires multiple specialties, expensive consultants, or expensive time — and the output is inconsistent. There is no tool that takes a plain-language description of a product and instantly produces a complete, technically sound design package: architecture diagrams, user flows, tech stack, PRD, and TRD.</p>
+    </div>
+
+    <div class="prd-section">
+      <h3>User personas</h3>
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-avatar" style="background:var(--purple-50);color:var(--purple-800)">PM</div>
+          <h4>Product Manager</h4>
+          <div class="persona-role">Mid-sized startup, 2–5 yrs exp</div>
+          <p>Needs to brief engineering quickly. Wants a PRD and architecture they can hand off without deep technical knowledge.</p>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar" style="background:var(--teal-50);color:var(--teal-800)">DE</div>
+          <h4>Developer / Founder</h4>
+          <div class="persona-role">Solo or small team (1–5 devs)</div>
+          <p>Building an MVP. Wants a tech stack recommendation and architecture diagram to validate their approach quickly.</p>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar" style="background:var(--amber-50);color:var(--amber-800)">SA</div>
+          <h4>Solutions Architect</h4>
+          <div class="persona-role">Agency or enterprise consulting</div>
+          <p>Scoping client projects. Needs to produce professional-grade system design deliverables fast during pre-sales.</p>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar" style="background:var(--coral-50);color:var(--coral-800)">ST</div>
+          <h4>Student / Learner</h4>
+          <div class="persona-role">CS graduate, bootcamp grad</div>
+          <p>Learning system design for interviews or side projects. Wants to see best-practice architectures explained clearly.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="prd-section">
+      <h3>Feature requirements — MoSCoW prioritisation</h3>
+      <table class="req-table">
+        <thead><tr><th>Feature</th><th>Priority</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Natural language prompt input</td><td><span class="priority p-must">Must</span></td><td>Accept freeform text describing any type of product or website</td></tr>
+          <tr><td>Architecture diagram generation</td><td><span class="priority p-must">Must</span></td><td>Auto-generate interactive system architecture with named components</td></tr>
+          <tr><td>User flow generation</td><td><span class="priority p-must">Must</span></td><td>Create screen-level user journey flowchart from the prompt</td></tr>
+          <tr><td>Tech stack recommendation</td><td><span class="priority p-must">Must</span></td><td>Layer-by-layer stack with rationale and alternatives per component</td></tr>
+          <tr><td>PRD document output</td><td><span class="priority p-must">Must</span></td><td>Structured PRD with personas, features, user stories, metrics</td></tr>
+          <tr><td>TRD document output</td><td><span class="priority p-must">Must</span></td><td>Technical doc with API contracts, DB schema, security model</td></tr>
+          <tr><td>PDF / Markdown export</td><td><span class="priority p-must">Must</span></td><td>Export entire design package as downloadable files</td></tr>
+          <tr><td>Data flow diagrams</td><td><span class="priority p-should">Should</span></td><td>Show how data moves between components in the system</td></tr>
+          <tr><td>API sequence diagrams</td><td><span class="priority p-should">Should</span></td><td>UML-style sequence diagrams for key API operations</td></tr>
+          <tr><td>Inline diagram editing</td><td><span class="priority p-should">Should</span></td><td>Right-click any node to modify, remove, or add components</td></tr>
+          <tr><td>AI chat for refinement</td><td><span class="priority p-should">Should</span></td><td>Ask follow-up questions in context to refine specific sections</td></tr>
+          <tr><td>Notion / Confluence push</td><td><span class="priority p-could">Could</span></td><td>One-click integration to push documents to external tools</td></tr>
+          <tr><td>Version history</td><td><span class="priority p-could">Could</span></td><td>Snapshot each generation so users can compare and revert</td></tr>
+          <tr><td>Team collaboration</td><td><span class="priority p-could">Could</span></td><td>Share a live session for multi-user editing</td></tr>
+          <tr><td>GitHub repo scaffold</td><td><span class="priority p-wont">Won't (v1)</span></td><td>Generate boilerplate code and repo structure from the architecture</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prd-section">
+      <h3>Success metrics</h3>
+      <div class="metric-row">
+        <div class="metric-card"><div class="mv">&lt; 45s</div><div class="ml">Time to first architecture diagram</div></div>
+        <div class="metric-card"><div class="mv">80%</div><div class="ml">User satisfaction (NPS-equivalent) on output quality</div></div>
+        <div class="metric-card"><div class="mv">60%</div><div class="ml">Export or share rate within the same session</div></div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="mv">3+</div><div class="ml">Avg diagrams generated per session (breadth of use)</div></div>
+        <div class="metric-card"><div class="mv">40%</div><div class="ml">Week-2 retention (returning users)</div></div>
+        <div class="metric-card"><div class="mv">&lt; 5%</div><div class="ml">Nonsensical output rate flagged by users</div></div>
+      </div>
+    </div>
+
+    <div class="prd-section">
+      <h3>Phased roadmap</h3>
+      <div class="tl-row"><div class="tl-phase">Phase 1<br><span style="font-weight:400;color:var(--color-text-tertiary)">Month 1–2</span></div><div class="tl-content"><h4>Foundation (MVP)</h4><p>Prompt input → architecture diagram + user flow + tech stack. PDF/MD export. Free tier with 3 generations/day. No auth required.</p></div></div>
+      <div class="tl-row"><div class="tl-phase">Phase 2<br><span style="font-weight:400;color:var(--color-text-tertiary)">Month 3–4</span></div><div class="tl-content"><h4>Documents</h4><p>Add PRD and TRD generation. Inline editing for all diagrams. Account creation + history. AI chat for refinement within a session.</p></div></div>
+      <div class="tl-row"><div class="tl-phase">Phase 3<br><span style="font-weight:400;color:var(--color-text-tertiary)">Month 5–6</span></div><div class="tl-content"><h4>Integrations</h4><p>Notion and Confluence export. API sequence diagrams. Version history. Shareable read-only links. Pro subscription tier.</p></div></div>
+      <div class="tl-row"><div class="tl-phase">Phase 4<br><span style="font-weight:400;color:var(--color-text-tertiary)">Month 7+</span></div><div class="tl-content"><h4>Collaboration</h4><p>Multi-user sessions. Comment threads on diagrams. Team workspaces. Custom templates. Enterprise SSO + audit logs.</p></div></div>
+    </div>
+  </div>
+
+  <!-- TRD TAB -->
+  <div id="panel-trd" class="panel">
+    <p class="section-label">Technical requirements document</p>
+
+    <div class="prd-section">
+      <h3>System architecture layers</h3>
+      <div class="arch-box">
+        <div class="arch-header"><div class="arch-dot" style="background:var(--purple-600)"></div><h4>Frontend</h4></div>
+        <div class="arch-body">
+          <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Single-page app with a canvas-first layout. Diagram rendering, document view, and chat panel coexist in a split-pane layout. Must support streaming partial updates without full re-render.</p>
+          <div class="tech-chips">
+            <span class="chip"><strong>Framework</strong> Next.js 14 (App Router)</span>
+            <span class="chip"><strong>Diagram</strong> React Flow / Mermaid.js</span>
+            <span class="chip"><strong>State</strong> Zustand</span>
+            <span class="chip"><strong>Styling</strong> Tailwind CSS</span>
+            <span class="chip"><strong>Editor</strong> Tiptap (for doc editing)</span>
+            <span class="chip"><strong>Export</strong> html2canvas + jsPDF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-box">
+        <div class="arch-header"><div class="arch-dot" style="background:var(--teal-600)"></div><h4>Backend / API layer</h4></div>
+        <div class="arch-body">
+          <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Stateless API layer that orchestrates the 7-stage generation pipeline. Supports streaming responses via SSE. Manages prompt context objects and persists generation sessions.</p>
+          <div class="tech-chips">
+            <span class="chip"><strong>Runtime</strong> Node.js + Fastify</span>
+            <span class="chip"><strong>LLM orchestration</strong> LangChain.js</span>
+            <span class="chip"><strong>Streaming</strong> Server-Sent Events (SSE)</span>
+            <span class="chip"><strong>Queue</strong> BullMQ (Redis-backed)</span>
+            <span class="chip"><strong>Auth</strong> Clerk / NextAuth</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-box">
+        <div class="arch-header"><div class="arch-dot" style="background:var(--amber-600)"></div><h4>AI / LLM layer</h4></div>
+        <div class="arch-body">
+          <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Each of the 7 pipeline stages calls a purpose-built structured prompt with JSON output mode. Prompts are versioned and stored as templates. Uses function-calling to produce typed output for each stage.</p>
+          <div class="tech-chips">
+            <span class="chip"><strong>Primary model</strong> Claude Sonnet (Anthropic API)</span>
+            <span class="chip"><strong>Fallback</strong> GPT-4o</span>
+            <span class="chip"><strong>Output mode</strong> Structured JSON (tool_use)</span>
+            <span class="chip"><strong>Prompt store</strong> Langfuse / PromptLayer</span>
+            <span class="chip"><strong>Evals</strong> Custom test harness</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-box">
+        <div class="arch-header"><div class="arch-dot" style="background:var(--coral-600)"></div><h4>Data persistence</h4></div>
+        <div class="arch-body">
+          <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Lightweight relational store for user accounts and session metadata. Diagram and document JSON stored in object storage for cost efficiency. Redis for session caching and job queues.</p>
+          <div class="tech-chips">
+            <span class="chip"><strong>Primary DB</strong> PostgreSQL (Supabase)</span>
+            <span class="chip"><strong>Object storage</strong> S3 / Cloudflare R2</span>
+            <span class="chip"><strong>Cache / Queue</strong> Redis (Upstash)</span>
+            <span class="chip"><strong>ORM</strong> Drizzle ORM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prd-section">
+      <h3>Core API contracts</h3>
+      <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:8px 14px 4px">
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="api-path">/api/generate</div><div class="api-desc">Initiate generation from prompt. Returns a session_id and opens an SSE stream.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="api-path">/api/generate/:id/stream</div><div class="api-desc">SSE endpoint — emits stage events: {stage, status, payload} for each of 7 stages.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="api-path">/api/sessions/:id</div><div class="api-desc">Retrieve a full generation result (all stages) for a given session.</div></div></div>
+        <div class="api-row"><span class="method m-put">PUT</span><div><div class="api-path">/api/sessions/:id/stage/:stage</div><div class="api-desc">Regenerate a single stage (e.g. rerun tech-stack) without re-running all stages.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="api-path">/api/sessions/:id/chat</div><div class="api-desc">Ask a follow-up question within the context of a session. Streams response back.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="api-path">/api/sessions/:id/export</div><div class="api-desc">Generate export bundle (PDF/MD/ZIP). Returns signed download URL.</div></div></div>
+      </div>
+    </div>
+
+    <div class="prd-section">
+      <h3>Database schema (key tables)</h3>
+      <table class="req-table">
+        <thead><tr><th>Table</th><th>Key columns</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code style="font-size:12px;font-family:var(--font-mono)">users</code></td><td><code style="font-size:12px;font-family:var(--font-mono)">id, email, plan, created_at</code></td><td>Auth via Clerk; minimal local record</td></tr>
+          <tr><td><code style="font-size:12px;font-family:var(--font-mono)">sessions</code></td><td><code style="font-size:12px;font-family:var(--font-mono)">id, user_id, prompt, product_type, scale, status</code></td><td>One row per generation attempt</td></tr>
+          <tr><td><code style="font-size:12px;font-family:var(--font-mono)">stage_outputs</code></td><td><code style="font-size:12px;font-family:var(--font-mono)">session_id, stage, payload_url, tokens_used, duration_ms</code></td><td>Payload stored in R2; URL here</td></tr>
+          <tr><td><code style="font-size:12px;font-family:var(--font-mono)">exports</code></td><td><code style="font-size:12px;font-family:var(--font-mono)">id, session_id, format, download_url, expires_at</code></td><td>Signed URLs expire after 24 hours</td></tr>
+          <tr><td><code style="font-size:12px;font-family:var(--font-mono)">usage_events</code></td><td><code style="font-size:12px;font-family:var(--font-mono)">user_id, event, tokens, cost_usd, ts</code></td><td>Billing ledger and rate limiting</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prd-section">
+      <h3>Security & compliance</h3>
+      <table class="req-table">
+        <thead><tr><th>Concern</th><th>Approach</th></tr></thead>
+        <tbody>
+          <tr><td>Authentication</td><td>JWT via Clerk; refresh tokens rotated every 15 min. PKCE for OAuth flows.</td></tr>
+          <tr><td>Prompt injection</td><td>Input sanitisation layer before LLM call. System prompt pinned, user content clearly delimited.</td></tr>
+          <tr><td>Data privacy</td><td>User prompts not used for model training. Prompts purged after 90 days (configurable). No PII stored in logs.</td></tr>
+          <tr><td>Rate limiting</td><td>5 generations/hour free, 60/hour pro. Token-bucket algorithm via Upstash Redis.</td></tr>
+          <tr><td>API keys</td><td>Anthropic API key stored in environment vault (Infisical / AWS Secrets Manager). Never sent to client.</td></tr>
+          <tr><td>Export links</td><td>Pre-signed S3/R2 URLs with 24-hour TTL. No public buckets.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prd-section">
+      <h3>Performance & scalability targets</h3>
+      <div class="callout">
+        <p>The most latency-sensitive operation is stage 1–3 (classify → architecture → flows). These must stream within 3 seconds of first token. Total end-to-end (all 7 stages) should complete in under 45 seconds on a cold start.</p>
+      </div>
+      <table class="req-table">
+        <thead><tr><th>SLO</th><th>Target</th><th>Mechanism</th></tr></thead>
+        <tbody>
+          <tr><td>Time to first diagram token</td><td>&lt; 3s (P95)</td><td>Streaming SSE + fast model routing</td></tr>
+          <tr><td>Full generation (7 stages)</td><td>&lt; 45s (P90)</td><td>Parallel stage execution where safe</td></tr>
+          <tr><td>API response (non-LLM)</td><td>&lt; 200ms (P99)</td><td>Edge-deployed API routes (Vercel/Cloudflare)</td></tr>
+          <tr><td>Export generation</td><td>&lt; 10s</td><td>Background job; notify user on ready</td></tr>
+          <tr><td>Uptime</td><td>99.5%</td><td>Multi-region deployment; LLM fallback model</td></tr>
+          <tr><td>Concurrent users (v1)</td><td>500 concurrent sessions</td><td>Queue jobs above threshold; horizontal pod scaling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prd-section">
+      <h3>Infrastructure & deployment</h3>
+      <div class="flow-grid">
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--purple-50)"><i class="ti ti-brand-vercel" aria-hidden="true" style="color:var(--purple-600)"></i></div>
+          <h4>Frontend hosting</h4>
+          <p>Vercel — edge-deployed Next.js. CDN for static assets, ISR for public pages.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--teal-50)"><i class="ti ti-server" aria-hidden="true" style="color:var(--teal-600)"></i></div>
+          <h4>API hosting</h4>
+          <p>Railway or Fly.io — containerised Node.js. Auto-scales on CPU and queue depth.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--amber-50)"><i class="ti ti-database" aria-hidden="true" style="color:var(--amber-600)"></i></div>
+          <h4>Database</h4>
+          <p>Supabase (Postgres) with connection pooling via PgBouncer. Daily automated backups.</p>
+        </div>
+        <div class="flow-card">
+          <div class="fc-icon" style="background:var(--coral-50)"><i class="ti ti-eye" aria-hidden="true" style="color:var(--coral-600)"></i></div>
+          <h4>Observability</h4>
+          <p>Sentry (errors), PostHog (product analytics), Langfuse (LLM tracing), Grafana (infra metrics).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+function toggleScreen(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+</script>
